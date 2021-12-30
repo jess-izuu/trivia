@@ -1,4 +1,7 @@
 {
+  "engines" : {
+    "node" : "12.x"
+  },
   "name": "wednesday",
   "version": "2.0.0",
   "description": "my express project",
