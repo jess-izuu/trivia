@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = '3400'
+const port = process.env.PORT || 3400
 
 app.set('view engine', 'ejs')
 app.use(express.static(__dirname + '/public'))
