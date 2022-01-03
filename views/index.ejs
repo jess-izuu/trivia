@@ -9,8 +9,11 @@
   </head>
   <body>
     <div class="login">
-      <% if (punct == ',') { %> Welcome to Trivia Tuesdays<%= punct %> <%=
-      my_user %> <% } %> <% if (punct != ',') { %>
+      <% if (punct == ',') { %> Welcome to Trivia Tuesdays<%= punct %>
+      <%=my_user %>
+      <br />
+      <a href="/home">Go Home</a>
+      <% } %> <% if (punct != ',') { %>
       <div>
         Welcome to Trivia Tuesdays
         <form action="/login" method="POST">
