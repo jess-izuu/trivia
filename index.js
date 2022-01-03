@@ -1,12 +1,77 @@
 const express = require('express')
+const session = require('express-session')
 const app = express()
 const port = process.env.PORT || 3400
 
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 app.set('view engine', 'ejs')
 app.use(express.static(__dirname + '/public'))
 
+app.use(
+  session({
+    secret: 'EBJGF83KEN',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  })
+)
+
 app.get('/', (req, res) => {
-  res.render('home')
+  let user = ''
+  let punct = ''
+  let invalid_login = ''
+
+  var params = req.query
+
+  invalid_login = params.reason || ''
+  console.log('invalid login,', invalid_login)
+  if (req.session && req.session.username) {
+    user = req.session.username
+    punct = ','
+  }
+  res.render('index', {
+    my_user: user,
+    punct: punct,
+    invalid_login: invalid_login,
+  })
+})
+
+app.post('/login', (req, res) => {
+  const valid_users = [
+    { name: 'sue', password: 'sue' },
+    { name: 'joe', password: 'joe' },
+    { name: 'sam', password: 'sam' },
+  ]
+
+  const user = req.body.username
+  const pass = req.body.password
+
+  const found_user = valid_users.find(
+    (usr) => usr.name == user && usr.password == pass
+  )
+
+  if (found_user) {
+    req.session.username = user
+    res.redirect('/home')
+  } else {
+    req.session.destroy(() => {
+      console.log('user reset')
+    })
+    res.redirect('/?reason=invalid_user')
+  }
+})
+
+app.get('/signup', (req, res) => {
+  res.render('signup')
+})
+
+app.get('/home', (req, res) => {
+  if (req.session && req.session.username) {
+    res.render('home', { user: req.session.username })
+  } else {
+    res.redirect('/')
+  }
 })
 
 app.get('/leader', (req, res) => {

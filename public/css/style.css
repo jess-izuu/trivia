@@ -191,6 +191,12 @@ ul {
   border-radius: 2px;
 }
 
+.error {
+  background-color: red;
+  color: white;
+  padding: 10px;
+}
+
 a {
   color: #4a13e2;
   text-decoration: none;
