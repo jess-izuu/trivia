@@ -8,23 +8,25 @@
     <title>T R I V I A</title>
   </head>
   <body>
-    Welcome to Trivia Tuesdays<%= punct %> <%= my_user %>
+    <div class="login">
+      Welcome to Trivia Tuesdays<%= punct %> <%= my_user %>
 
-    <form action="/login" method="POST">
-      <p>
-        <input type="text" name="username" placeholder="username" />
-      </p>
-      <p>
-        <input type="text" name="password" placeholder="password" />
-      </p>
-      <input type="submit" value="Login" />
-    </form>
-    <% if (invalid_login) { %>
-    <div class="error">
-      ERROR: The username and/or password is incorrect.
-      <br />
-      <a href="/signup">Sign Up</a>
+      <form action="/login" method="POST">
+        <p>
+          <input type="text" name="username" placeholder="username" />
+        </p>
+        <p>
+          <input type="text" name="password" placeholder="password" />
+        </p>
+        <input type="submit" value="Login" />
+      </form>
+      <% if (invalid_login) { %>
+      <div class="error">
+        ERROR: The username and/or password is incorrect.
+        <br />
+        <a href="/signup">Sign Up</a>
+      </div>
+      <% } %>
     </div>
-    <% } %>
   </body>
 </html>

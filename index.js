@@ -17,6 +17,12 @@ app.use(
   })
 )
 
+let valid_users = [
+  { name: 'sue', password: 'sue' },
+  { name: 'joe', password: 'joe' },
+  { name: 'sam', password: 'sam' },
+]
+
 app.get('/', (req, res) => {
   let user = ''
   let punct = ''
@@ -38,12 +44,6 @@ app.get('/', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-  const valid_users = [
-    { name: 'sue', password: 'sue' },
-    { name: 'joe', password: 'joe' },
-    { name: 'sam', password: 'sam' },
-  ]
-
   const user = req.body.username
   const pass = req.body.password
 
@@ -55,11 +55,14 @@ app.post('/login', (req, res) => {
     req.session.username = user
     res.redirect('/home')
   } else {
-    req.session.destroy(() => {
-      console.log('user reset')
-    })
+    req.session.destroy()
     res.redirect('/?reason=invalid_user')
   }
+})
+
+app.get('/logout', (req, res) => {
+  req.session.destroy()
+  res.redirect('/')
 })
 
 app.get('/signup', (req, res) => {
@@ -75,54 +78,82 @@ app.get('/home', (req, res) => {
 })
 
 app.get('/leader', (req, res) => {
-  res.render('leader')
+  if (req.session && req.session.username) {
+    res.render('leader')
+  } else {
+    res.redirect('/')
+  }
 })
 
 app.get('/food', (req, res) => {
   score = 0
-  res.render('food')
+  if (req.session && req.session.username) {
+    res.render('food')
+  } else {
+    res.redirect('/')
+  }
 })
 
 app.get('/food/:number/:points', (req, res) => {
   const questionNum = req.params['number']
   const points = +req.params['points']
 
-  if (questionNum < 6) {
-    res.render(`food${questionNum}`, { totalScore: points })
-  } else if (questionNum == 6) {
-    res.render('end', { totalScore: points })
+  if (req.session && req.session.username) {
+    if (questionNum < 6) {
+      res.render(`food${questionNum}`, { totalScore: points })
+    } else if (questionNum == 6) {
+      res.render('end', { totalScore: points })
+    }
+  } else {
+    res.redirect('/')
   }
 })
 
 app.get('/geo', (req, res) => {
   score = 0
-  res.render('geo')
+  if (req.session && req.session.username) {
+    res.render('geo')
+  } else {
+    res.redirect('/')
+  }
 })
 
 app.get('/geo/:number/:points', (req, res) => {
   const questionNum = req.params['number']
   const points = +req.params['points']
 
-  if (questionNum < 6) {
-    res.render(`geo${questionNum}`, { totalScore: points })
-  } else if (questionNum == 6) {
-    res.render('end', { totalScore: points })
+  if (req.session && req.session.username) {
+    if (questionNum < 6) {
+      res.render(`geo${questionNum}`, { totalScore: points })
+    } else if (questionNum == 6) {
+      res.render('end', { totalScore: points })
+    }
+  } else {
+    res.redirect('/')
   }
 })
 
 app.get('/science', (req, res) => {
   score = 0
-  res.render('science')
+  if (req.session && req.session.username) {
+    res.render('science')
+  } else {
+    res.redirect('/')
+  }
 })
 
 app.get('/science/:number/:points', (req, res) => {
   const questionNum = req.params['number']
   const points = +req.params['points']
 
-  if (questionNum < 6) {
-    res.render(`science${questionNum}`, { totalScore: points })
-  } else if (questionNum == 6) {
-    res.render('end', { totalScore: points })
+  if (req.session && req.session.username) {
+    if (questionNum < 6) {
+      res.render(`science${questionNum}`, { totalScore: points })
+    } else if (questionNum == 6) {
+      res.render('end', { totalScore: points })
+    }
+  } else {
+    res.redirect('/')
   }
 })
 
@@ -131,31 +162,35 @@ app.get('/yes/:category/:num/:score', (req, res) => {
   const questionNumber = +req.params['num']
   const points = +req.params['score']
 
-  if (questionNumber == 5) {
-    res.render('correct', {
-      topic: questionCategory,
-      number: questionNumber,
-      totalScore: points + 1,
-    })
-  }
-  if (questionCategory == 'geo' && questionNumber < 5) {
-    res.render('correct', {
-      topic: questionCategory,
-      number: questionNumber,
-      totalScore: points + 1,
-    })
-  } else if (questionCategory == 'science' && questionNumber < 5) {
-    res.render('correct', {
-      topic: questionCategory,
-      number: questionNumber,
-      totalScore: points + 1,
-    })
-  } else if (questionCategory == 'food' && questionNumber < 5) {
-    res.render('correct', {
-      topic: questionCategory,
-      number: questionNumber,
-      totalScore: points + 1,
-    })
+  if (req.session && req.session.username) {
+    if (questionNumber == 5) {
+      res.render('correct', {
+        topic: questionCategory,
+        number: questionNumber,
+        totalScore: points + 1,
+      })
+    }
+    if (questionCategory == 'geo' && questionNumber < 5) {
+      res.render('correct', {
+        topic: questionCategory,
+        number: questionNumber,
+        totalScore: points + 1,
+      })
+    } else if (questionCategory == 'science' && questionNumber < 5) {
+      res.render('correct', {
+        topic: questionCategory,
+        number: questionNumber,
+        totalScore: points + 1,
+      })
+    } else if (questionCategory == 'food' && questionNumber < 5) {
+      res.render('correct', {
+        topic: questionCategory,
+        number: questionNumber,
+        totalScore: points + 1,
+      })
+    }
+  } else {
+    res.redirect('/')
   }
 })
 
@@ -164,35 +199,39 @@ app.get('/no/:category/:num/:score', (req, res) => {
   const questionNumber = +req.params['num']
   const points = +req.params['score']
 
-  if (questionNumber == 5) {
-    res.render('wrong', {
-      topic: questionCategory,
-      number: questionNumber,
-      totalScore: points,
-    })
-  }
+  if (req.session && req.session.username) {
+    if (questionNumber == 5) {
+      res.render('wrong', {
+        topic: questionCategory,
+        number: questionNumber,
+        totalScore: points,
+      })
+    }
 
-  if (questionCategory == 'geo' && questionNumber < 5) {
-    score = points
-    res.render('wrong', {
-      topic: questionCategory,
-      number: questionNumber,
-      totalScore: points,
-    })
-  } else if (questionCategory == 'science' && questionNumber < 5) {
-    score = points
-    res.render('wrong', {
-      topic: questionCategory,
-      number: questionNumber,
-      totalScore: points,
-    })
-  } else if (questionCategory == 'food' && questionNumber < 5) {
-    score = points
-    res.render('wrong', {
-      topic: questionCategory,
-      number: questionNumber,
-      totalScore: points,
-    })
+    if (questionCategory == 'geo' && questionNumber < 5) {
+      score = points
+      res.render('wrong', {
+        topic: questionCategory,
+        number: questionNumber,
+        totalScore: points,
+      })
+    } else if (questionCategory == 'science' && questionNumber < 5) {
+      score = points
+      res.render('wrong', {
+        topic: questionCategory,
+        number: questionNumber,
+        totalScore: points,
+      })
+    } else if (questionCategory == 'food' && questionNumber < 5) {
+      score = points
+      res.render('wrong', {
+        topic: questionCategory,
+        number: questionNumber,
+        totalScore: points,
+      })
+    }
+  } else {
+    res.redirect('/')
   }
 })
 
