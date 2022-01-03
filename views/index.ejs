@@ -9,22 +9,26 @@
   </head>
   <body>
     <div class="login">
-      Welcome to Trivia Tuesdays<%= punct %> <%= my_user %>
-
-      <form action="/login" method="POST">
-        <p>
-          <input type="text" name="username" placeholder="username" />
-        </p>
-        <p>
-          <input type="text" name="password" placeholder="password" />
-        </p>
-        <input type="submit" value="Login" />
-      </form>
-      <% if (invalid_login) { %>
-      <div class="error">
-        ERROR: The username and/or password is incorrect.
-        <br />
-        <a href="/signup">Sign Up</a>
+      <% if (punct == ',') { %> Welcome to Trivia Tuesdays<%= punct %> <%=
+      my_user %> <% } %> <% if (punct != ',') { %>
+      <div>
+        Welcome to Trivia Tuesdays
+        <form action="/login" method="POST">
+          <p>
+            <input type="text" name="username" placeholder="username" />
+          </p>
+          <p>
+            <input type="text" name="password" placeholder="password" />
+          </p>
+          <input type="submit" value="Login" />
+        </form>
+        <% if (invalid_login) { %>
+        <div class="error">
+          ERROR: The username and/or password is incorrect.
+          <br />
+          <a href="/signup">Sign Up</a>
+        </div>
+        <% } %>
       </div>
       <% } %>
     </div>
