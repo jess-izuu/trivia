@@ -66,7 +66,29 @@ app.get('/logout', (req, res) => {
 })
 
 app.get('/signup', (req, res) => {
-  res.render('signup')
+  var params = req.query
+  success = params.success
+  console.log('success', success)
+  res.render('signup', { password_redo: success })
+})
+
+app.post('/signup', (req, res) => {
+  const user = req.body.username
+  const pass = req.body.password
+  const pass2 = req.body.password2
+
+  if (pass == pass2) {
+    console.log('Passwords match')
+    valid_users.push({
+      name: user,
+      password: pass,
+    })
+    console.log('valid users', valid_users)
+    res.redirect('/?success=yes')
+  } else {
+    console.log('Password mismatch')
+    res.redirect('/signup?success=no')
+  }
 })
 
 app.get('/home', (req, res) => {
